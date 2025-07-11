@@ -1,41 +1,43 @@
 ﻿namespace ParksComputing.Cells;
 
-/// <summary>Immutable compiled mesh.</summary>
-public sealed class Mesh<TResult> {
+/// <summary>Immutable, compiled DAG.</summary>
+public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
     private readonly ICellBox[] _nodes;
     private readonly Dictionary<int, List<int>> _edges;
-    private readonly int _root;
+    private readonly int _rootId;
+    private readonly int _sinkId;
 
     internal Mesh(
         ICellBox[] nodes,
         Dictionary<int, List<int>> edges,
-        int rootNode) => (_nodes, _edges, _root) = (nodes, edges, rootNode);
+        int rootId,
+        int sinkId)
+        => (_nodes, _edges, _rootId, _sinkId) = (nodes, edges, rootId, sinkId);
 
-    public async Task<TResult> RunAsync(object? seed, CancellationToken ct = default) {
+    public async Task<TOut> RunAsync(TIn seed, CancellationToken ct = default) {
+        var valueAtNode = new object?[_nodes.Length];
+
+        valueAtNode[_rootId] = seed!;
         var ready = new Queue<int>();
-        var pendingInputs = new Dictionary<int, object?>();
-        pendingInputs[_root] = seed;
-        ready.Enqueue(_root);
+        ready.Enqueue(_rootId);
 
         while (ready.Count > 0) {
             int id = ready.Dequeue();
-            var input = pendingInputs[id];
+            var input = valueAtNode[id];
+
             var output = await _nodes[id].RunAsync(input, ct);
+            valueAtNode[id] = output;
 
-            pendingInputs[id] = output;   // keep final node's result
-
-            if (!_edges.TryGetValue(id, out var outs)) {
+            if (!_edges.TryGetValue(id, out var outs))
                 continue;
-            }
 
-            foreach (var to in outs) {
-                // for fan-in you could merge/aggregate; here we overwrite
-                pendingInputs[to] = output;
+            foreach (int to in outs) {
+                valueAtNode[to] = output; // simple overwrite; fan-in merge could go here
                 ready.Enqueue(to);
             }
         }
 
-        return (TResult?)pendingInputs[_nodes.Length - 1]
-            ?? throw new InvalidOperationException("Mesh produced null");
+        return (TOut?)valueAtNode[_sinkId]
+            ?? throw new InvalidOperationException("Mesh produced null.");
     }
 }
