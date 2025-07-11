@@ -1,0 +1,54 @@
+﻿###############################################################################
+# Visual Studio / .NET (cross-platform) – Cells CBP solution
+###############################################################################
+
+## IDE / editor metadata
+.vs/                               # Visual Studio
+/.vs/Cells
+.vscode/                           # VS Code
+.idea/                             # JetBrains Rider / IntelliJ
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build artifacts
+**/bin/
+**/obj/
+artifacts/                         # if you use dotnet publish-pack
+TestResults/
+TestOutput/
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/                          # legacy packages folder
+*.nuspec
+project.lock.json
+# Local NuGet.config packages folder overrides
+.nuget/
+
+## Logs
+*.log
+
+## Coverage / analysis
+coverage/
+*.coverage
+*.coveragexml
+*.sonarqube/
+_ReportGenerator/
+
+## Rider / ReSharper
+*.DotSettings.user
+_ReSharper.*
+*.[Rr]e[Ss]harper
+
+## OS-specific cruft
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+###############################################################################
+# END
+###############################################################################
