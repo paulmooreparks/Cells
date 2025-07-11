@@ -9,6 +9,7 @@ using ParksComputing.Cells;
 namespace DocInsight;
 
 internal class DocInsightMainCell : ICell<string[], int> {
+    public string Name => nameof(DocInsightMainCell);
     public string[] In { get; set; } = [];
     public int Out { get; }
 
