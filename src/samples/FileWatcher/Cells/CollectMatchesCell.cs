@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using ParksComputing.Cells.Extensions;
-
 namespace ParksComputing.Cells.Samples.FileWatcher.Cells;
 
 public sealed class CollectMatchesCell : ICell<ConditionalResult<string>, List<string>> {

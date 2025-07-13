@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 public static class FanOut {
     // run N parallel branches returning BooleanResult<TOut,Exception>[]

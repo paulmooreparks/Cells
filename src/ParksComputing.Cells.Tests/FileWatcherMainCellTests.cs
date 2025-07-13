@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using System.Text.Json;
-using ParksComputing.Cells.Extensions;
 using ParksComputing.Cells.Samples.FileWatcher;
 using ParksComputing.Cells.Samples.FileWatcher.Cells;
 using Microsoft.Extensions.Logging.Abstractions;

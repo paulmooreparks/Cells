@@ -1,5 +1,4 @@
 ﻿using ParksComputing.Cells;
-using ParksComputing.Cells.Extensions;
 using ParksComputing.Cells.Samples.FileWatcher.Cells;
 
 namespace ParksComputing.Cells.Samples.FileWatcher;

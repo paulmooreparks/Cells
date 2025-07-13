@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 /// <summary>
 ///  Collapses <c>N</c> parallel branches back into a single list,

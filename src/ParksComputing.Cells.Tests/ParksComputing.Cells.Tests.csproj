@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ParksComputing.Cells.Extensions\ParksComputing.Cells.Extensions.csproj" />
     <ProjectReference Include="..\ParksComputing.Cells.Testing\ParksComputing.Cells.Testing.csproj" />
     <ProjectReference Include="..\ParksComputing.Cells\ParksComputing.Cells.csproj" />
     <ProjectReference Include="..\samples\DocInsight\DocInsight.csproj" />

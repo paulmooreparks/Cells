@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParksComputing.Cells.Extensions;
+namespace ParksComputing.Cells;
 
 /// <summary>
 /// Runs the wrapped cell only when <paramref name="predicate"/> is true.

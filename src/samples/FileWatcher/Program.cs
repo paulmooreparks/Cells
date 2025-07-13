@@ -10,9 +10,7 @@ using ParksComputing.Cells.Samples.FileWatcher.Cells;
 if (args.Length is 0 || args[0] is "-h" or "--help") {
     Console.WriteLine("""
         Usage:
-            dotnet run -- watch <folder-to-monitor> [--serve]
-
-            --serve   Also start the local upload API (future feature).
+            filewatcher <folder-to-monitor> <upload-folder>
         """);
     return 1;
 }

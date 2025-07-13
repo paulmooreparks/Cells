@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 /// <summary>
 /// Takes a batch of <c>BooleanResult&lt;TIn1,Exception&gt;</c>.

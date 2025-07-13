@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 // (string, string[]) join
 public sealed class TupleJoinCell<TA, TB> : ICell<object?, (TA, TB)> {

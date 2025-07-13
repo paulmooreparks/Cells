@@ -5,7 +5,6 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 
 using ParksComputing.Cells;
-using ParksComputing.Cells.Extensions;
 using ParksComputing.Cells.Hosting;
 using ParksComputing.Cells.Samples.FileWatcher;
 

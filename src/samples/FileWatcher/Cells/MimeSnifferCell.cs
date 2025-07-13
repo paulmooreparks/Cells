@@ -1,7 +1,6 @@
 ﻿using System.IO;
 
 using ParksComputing.Cells;
-using ParksComputing.Cells.Extensions;
 
 namespace ParksComputing.Cells.Samples.FileWatcher.Cells;
 

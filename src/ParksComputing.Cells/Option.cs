@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParksComputing.Cells.Extensions;
+namespace ParksComputing.Cells;
 
 /// <summary>
 /// Minimal “maybe” type: Either <c>Some(value)</c> or <c>None</c>.

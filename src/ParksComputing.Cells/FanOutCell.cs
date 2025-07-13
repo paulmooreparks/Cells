@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 /// <summary>
 /// Fans the same input into N branches in parallel and collects

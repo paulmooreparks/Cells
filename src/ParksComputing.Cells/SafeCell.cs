@@ -1,4 +1,4 @@
-﻿namespace ParksComputing.Cells.Extensions;
+﻿namespace ParksComputing.Cells;
 
 public sealed class SafeCell<TIn, TOut> : ICell<TIn, Result<TOut, Exception>> {
     private readonly ICell<TIn, TOut> _inner;

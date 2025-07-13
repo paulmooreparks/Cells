@@ -1,4 +1,6 @@
-﻿namespace ParksComputing.Cells.Hosting;
+﻿using ParksComputing.Cells;
+
+namespace ParksComputing.Cells.Hosting;
 
 public static class CellsHost {
     public static async Task<int> RunAsync<TMain>(string[] args, CancellationToken ct = default)
