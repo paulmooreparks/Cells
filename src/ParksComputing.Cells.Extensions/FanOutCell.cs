@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Fans the same input into N branches in parallel and collects
-/// <c>Result&lt;TOut,Exception&gt;</c> from every branch.
+/// <c>BooleanResult&lt;TOut2,Exception&gt;</c> from every branch.
 /// </summary>
 public sealed class FanOutCell<TIn, TOut> : ICell<TIn, IReadOnlyList<Result<TOut, Exception>>> {
     private readonly ICell<TIn, TOut>[] _branches;

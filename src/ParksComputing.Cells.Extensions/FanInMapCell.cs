@@ -1,11 +1,11 @@
 ﻿namespace ParksComputing.Cells.Extensions;
 
 /// <summary>
-/// Takes a batch of <c>Result&lt;TIn,Exception&gt;</c>.
+/// Takes a batch of <c>BooleanResult&lt;TIn1,Exception&gt;</c>.
 /// • For every <strong>successful</strong> item
-///     1. runs a single <paramref name="preMap"/> cell (<c>TIn → TMid</c>)
+///     1. runs a single <paramref name="preMap"/> cell (<c>TIn1 → TRootOut</c>)
 ///     2. passes the mapped value to a <see cref="FanOutCell{TMid,TOut}"/>
-///        built by <paramref name="branchFactory"/> (<c>TMid → TOut</c> in N branches)
+///        built by <paramref name="branchFactory"/> (<c>TRootOut → TOut2</c> in N branches)
 /// • Preserves any failures from the input batch
 /// • Collects <strong>all</strong> successes &amp; failures (flattened) in <see cref="Out"/>
 /// </summary>
@@ -37,12 +37,12 @@ public sealed class FanInMapCell<TIn, TMid, TOut>
             }
 
             try {
-                // ─── 1. single transform (TIn ➜ TMid) ─────────────────────
+                // ─── 1. single transform (TIn1 ➜ TRootOut) ─────────────────────
                 _preMap.In = res.Ok;
                 await _preMap.ExecuteAsync(ct);
                 var mid = _preMap.Out;
 
-                // ─── 2. fan-out to N branches in parallel (TMid ➜ TOut) ───
+                // ─── 2. fan-out to N branches in parallel (TRootOut ➜ TOut2) ───
                 var fanOut = new FanOutCell<TMid, TOut>(_branchFactory(res.Ok));
                 fanOut.In = mid;
                 await fanOut.ExecuteAsync(ct);

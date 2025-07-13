@@ -1,43 +1,96 @@
-﻿namespace ParksComputing.Cells;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-/// <summary>Immutable, compiled DAG.</summary>
+namespace ParksComputing.Cells;
+
+/// <summary>
+/// Immutable compiled mesh of ICell nodes.
+/// Supports fan-out and fan-in by counting expected inputs and buffering for fan-in nodes.
+/// </summary>
 public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
     private readonly ICellBox[] _nodes;
     private readonly Dictionary<int, List<int>> _edges;
-    private readonly int _rootId;
-    private readonly int _sinkId;
+    private readonly int _root;
+    private readonly int _sink;
 
     internal Mesh(
         ICellBox[] nodes,
         Dictionary<int, List<int>> edges,
-        int rootId,
-        int sinkId)
-        => (_nodes, _edges, _rootId, _sinkId) = (nodes, edges, rootId, sinkId);
+        int root,
+        int sink) {
+        _nodes = nodes;
+        _edges = edges;
+        _root = root;
+        _sink = sink;
+    }
 
     public async Task<TOut> RunAsync(TIn seed, CancellationToken ct = default) {
-        var valueAtNode = new object?[_nodes.Length];
+        // exactly the same fan-in/fan-out logic as before,
+        // except we strongly type the input and output:
+        var queue = new Queue<(int nodeId, object? value)>();
+        var buffers = new Dictionary<int, List<object?>>();
+        var inCount = ComputeInDegree(_edges, _nodes.Length);
+        object? final = null;
 
-        valueAtNode[_rootId] = seed!;
-        var ready = new Queue<int>();
-        ready.Enqueue(_rootId);
+        queue.Enqueue((_root, seed!));
 
-        while (ready.Count > 0) {
-            int id = ready.Dequeue();
-            var input = valueAtNode[id];
+        while (queue.Count > 0) {
+            ct.ThrowIfCancellationRequested();
+            var (id, val) = queue.Dequeue();
+            var node = _nodes[id];
 
-            var output = await _nodes[id].RunAsync(input, ct);
-            valueAtNode[id] = output;
+            if (inCount[id] > 1) {
+                if (!buffers.TryGetValue(id, out var list)) {
+                    buffers[id] = list = new List<object?>();
+                }
 
-            if (!_edges.TryGetValue(id, out var outs))
-                continue;
+                list.Add(val);
 
-            foreach (int to in outs) {
-                valueAtNode[to] = output; // simple overwrite; fan-in merge could go here
-                ready.Enqueue(to);
+                if (list.Count < inCount[id]) { 
+                    continue; 
+                }
+
+                // all inputs arrive → run once PER input in order
+                object? outVal = null;
+
+                foreach (var v in list){ 
+                    outVal = await node.RunAsync(v, ct); 
+                }
+
+                buffers.Remove(id);
+                Propagate(id, outVal);
             }
+            else {
+                var outVal = await node.RunAsync(val, ct);
+                Propagate(id, outVal);
+            }
+
+            await node.CompleteAsync(ct);
         }
 
-        return (TOut?)valueAtNode[_sinkId]
-            ?? throw new InvalidOperationException("Mesh produced null.");
+        return (TOut)final!;  // set by Propagate when id==_sink
+
+        void Propagate(int node, object? outVal) {
+            if (node == _sink) {
+                final = outVal;
+            }
+
+            if (_edges.TryGetValue(node, out var kids)) {
+                foreach (var c in kids) {
+                    queue.Enqueue((c, outVal));
+                }
+            }
+        }
+    }
+
+    private static int[] ComputeInDegree(
+        Dictionary<int, List<int>> edges, int n) {
+        var inDegree = new int[n];
+        foreach (var kv in edges)
+            foreach (int to in kv.Value)
+                inDegree[to]++;
+        return inDegree;
     }
 }

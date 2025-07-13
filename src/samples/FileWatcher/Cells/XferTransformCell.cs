@@ -16,10 +16,11 @@ public sealed class XferTransformCell : ICell<FileSeed, string> {
     public string Out { get; private set; } = string.Empty;
 
     public async Task ExecuteAsync(CancellationToken ct = default) {
-        // 1. load file
+        Console.WriteLine($"[{Name}] Transforming XferLang file: {In.FullPath}");
         string xferText = await File.ReadAllTextAsync(In.FullPath, ct);
         var obj = XferConvert.Deserialize<TestRecord>(xferText);
         Out = JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = false });
+        Console.WriteLine($"XferLang transformation completed. Output: {Out ?? "null"}");
     }
 
     public class TestRecord {
