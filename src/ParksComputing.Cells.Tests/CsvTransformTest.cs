@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
+using ParksComputing.Cells.Samples.FileWatcher;
 using ParksComputing.Cells.Samples.FileWatcher.Cells;
 
 namespace ParksComputing.Cells.Tests;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParksComputing.Cells;
+namespace ParksComputing.Cells.Samples.FileWatcher;
 
 /// <summary>
 /// Seed record produced by the folder-watch loop.  
