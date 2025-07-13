@@ -23,7 +23,7 @@ public sealed class CollectMatchesCell : ICell<ConditionalResult<string>, List<s
         return Task.CompletedTask;
     }
 
-    public Task CompletedAsync(CancellationToken _ = default) {
+    public Task CompleteAsync(CancellationToken ct = default) {
         Console.WriteLine($"CollectMatchesCell completed with {Out.Count} matches collected.");
         _list.Clear();
         return Task.CompletedTask;

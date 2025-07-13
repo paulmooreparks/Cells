@@ -27,12 +27,12 @@ public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
     }
 
     public async Task<TOut> RunAsync(TIn seed, CancellationToken ct = default) {
-        // exactly the same fan-in/fan-out logic as before,
-        // except we strongly type the input and output:
         var queue = new Queue<(int nodeId, object? value)>();
         var buffers = new Dictionary<int, List<object?>>();
         var inCount = ComputeInDegree(_edges, _nodes.Length);
         object? final = null;
+
+        var executed = new HashSet<int>();
 
         queue.Enqueue((_root, seed!));
 
@@ -47,16 +47,12 @@ public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
                 }
 
                 list.Add(val);
+                if (list.Count < inCount[id])
+                    continue;
 
-                if (list.Count < inCount[id]) { 
-                    continue; 
-                }
-
-                // all inputs arrive → run once PER input in order
                 object? outVal = null;
-
-                foreach (var v in list){ 
-                    outVal = await node.RunAsync(v, ct); 
+                foreach (var v in list) {
+                    outVal = await node.RunAsync(v, ct);
                 }
 
                 buffers.Remove(id);
@@ -67,10 +63,15 @@ public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
                 Propagate(id, outVal);
             }
 
-            await node.CompleteAsync(ct);
+            executed.Add(id);
         }
 
-        return (TOut)final!;  // set by Propagate when id==_sink
+        // Now call CompleteAsync for all executed nodes, *after* the full run
+        foreach (var id in executed) {
+            await _nodes[id].CompleteAsync(ct);
+        }
+
+        return (TOut)final!;
 
         void Propagate(int node, object? outVal) {
             if (node == _sink) {
@@ -84,6 +85,7 @@ public sealed class Mesh<TIn, TOut> : IRunnable<TIn, TOut> {
             }
         }
     }
+
 
     private static int[] ComputeInDegree(
         Dictionary<int, List<int>> edges, int n) {

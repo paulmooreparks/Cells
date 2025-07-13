@@ -5,4 +5,12 @@
 /// <paramref name="ExitCode"/> 0 = success; non-zero means error.
 /// <paramref name="Message"/>  human-readable summary.
 /// </summary>
-public sealed record AppResult(int ExitCode, string Message);
+public class AppResult {
+    public int ExitCode { get; }
+    public string Message { get; }
+    
+    public AppResult(int exitCode, string message) {
+        ExitCode = exitCode;
+        Message = message;
+    }
+}

@@ -29,6 +29,7 @@ public sealed class FileWatcherMainCell : ICell<WatchOptions, AppResult> {
     public AppResult Out { get; private set; } = new(0, "not started");
 
     public async Task ExecuteAsync(CancellationToken ct = default) {
+
         // Build mesh the first time ExecuteAsync is called, when In is set
         _mesh ??= FileWatcherMesh.Build(In.UploadFolder);
 
@@ -90,3 +91,15 @@ public sealed class FileWatcherMainCell : ICell<WatchOptions, AppResult> {
         // Give up after a few tries; let the pipeline pick it up later (or log an error)
     }
 }
+
+
+
+#if false
+        var runnerCell = new RunnerCell<WatchOptions, AppResult>(
+            runner: async (log, opts, self, token) => {
+                var main = new FileWatcherMainCell(log) { In = opts };
+                await main.ExecuteAsync(token);
+            },
+            makeResult: (code, msg) => new AppResult(code, msg)
+        );
+#endif
